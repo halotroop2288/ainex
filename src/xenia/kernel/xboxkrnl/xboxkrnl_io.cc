@@ -734,6 +734,16 @@ dword_result_t IoCreateDevice_entry(dword_t device_struct, dword_t r4,
 }
 DECLARE_XBOXKRNL_EXPORT1(IoCreateDevice, kFileSystem, kStub);
 
+// https://pastebin.com/11Y1rXrR
+dword_result_t IoSynchronousDeviceIoControlRequest_entry(
+    dword_t io_request, lpdword_t device_object /* void* */,
+    lpdword_t buffer_input /* void** */, dword_t length, dword_t unk_1,
+    dword_t unk_2, lpdword_t output /* void* */) {
+  return X_ERROR_SUCCESS;
+}
+DECLARE_XBOXKRNL_EXPORT1(IoSynchronousDeviceIoControlRequest, kFileSystem,
+                         kStub);
+
 }  // namespace xboxkrnl
 }  // namespace kernel
 }  // namespace xe

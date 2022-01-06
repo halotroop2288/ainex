@@ -253,6 +253,15 @@ static_assert_size(X_UNICODE_STRING, 8);
 // https://pastebin.com/SMypYikG
 typedef uint32_t XNotificationID;
 
+#define X_VIDEO_STANDARD_NTSC 0x1
+#define X_VIDEO_STANDARD_NTSCJ 0x2
+#define X_VIDEO_STANDARD_PAL 0x3
+
+#define X_VIDEO_FLAGS_WIDESCREEN 0x1
+#define X_VIDEO_FLAGS_720p 0x2
+#define X_VIDEO_FLAGS_1080i 0x4
+#define X_VIDEO_FLAGS_480p 0x8
+
 // https://github.com/CodeAsm/ffplay360/blob/master/Common/XTLOnPC.h
 struct X_VIDEO_MODE {
   be<uint32_t> display_width;
@@ -262,9 +271,7 @@ struct X_VIDEO_MODE {
   be<uint32_t> is_hi_def;
   be<float> refresh_rate;
   be<uint32_t> video_standard;
-  be<uint32_t> unknown_0x8a;
-  be<uint32_t> unknown_0x01;
-  be<uint32_t> reserved[3];
+  be<uint32_t> reserved[5];
 };
 static_assert_size(X_VIDEO_MODE, 48);
 
@@ -338,11 +345,65 @@ enum class XLanguage : uint32_t {
   kKorean = 7,
   kTChinese = 8,
   kPortuguese = 9,
-  kSChinese = 10,
+  kSChinese_ = 10,  // Deprecated
   kPolish = 11,
   kRussian = 12,
-  // STFS headers can't support any more languages than these
-  kMaxLanguages = 13
+  kSwedish = 13,
+  kTurkish = 14,
+  kNorwegian = 15,
+  kDutch = 16,
+  kSChinese = 17,
+  // Max languages supported by the latest kernel
+  kMaxLanguages = 18
+};
+
+enum class XLocale : uint32_t {
+  kInvalid = 0,
+  kAustralia = 1,
+  kAustria = 2,
+  kBelgium = 3,
+  kBrazil = 4,
+  kCanada = 5,
+  kChile = 6,
+  kChina = 7,
+  kColumbia = 8,
+  kCzechRepublic = 9,
+  kDenmark = 10,
+  kFinland = 11,
+  kFrance = 12,
+  kGermany = 13,
+  kGreece = 14,
+  kHongKong = 15,
+  kHungary = 16,
+  kIndia = 17,
+  kIreland = 18,
+  kItaly = 19,
+  kJapan = 20,
+  kKorea = 21,
+  kMexico = 22,
+  kNetherlands = 23,
+  kNewZealand = 24,
+  kNorway = 25,
+  kPoland = 26,
+  kPortugal = 27,
+  kSingapore = 28,
+  kSlovakia = 29,
+  kSouthAfrica = 30,
+  kSpain = 31,
+  kSweden = 32,
+  kSwitzerland = 33,
+  kTaiwan = 34,
+  kGreatBritain = 35,
+  kUnitedStates = 36,
+  kRussianFederation = 37,
+  kWorldwide = 38,
+  kTurkey = 39,
+  kArgentina = 40,
+  kSaudiArabia = 41,
+  kIsrael = 42,
+  kUnitedArabEmirates = 43,
+  // Max locales supported by the kernel
+  kMaxLocales = 44
 };
 
 enum class XContentType : uint32_t {

@@ -39,6 +39,16 @@ uint8_t schema_bin[] = {
     0x00, 0x00, 0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18,
 };
 
+unsigned long g_dwDashContext = 0;
+
+dword_result_t XamSetDashContext_entry(dword_t value) {
+  return g_dwDashContext = value;
+}
+DECLARE_XAM_EXPORT1(XamSetDashContext, kNone, kStub);
+
+dword_result_t XamGetDashContext_entry() { return g_dwDashContext; }
+DECLARE_XAM_EXPORT1(XamGetDashContext, kNone, kStub);
+
 dword_result_t XamGetOnlineSchema_entry() {
   static uint32_t schema_guest = 0;
 
@@ -185,10 +195,23 @@ dword_result_t XamGetSystemVersion_entry() {
 }
 DECLARE_XAM_EXPORT1(XamGetSystemVersion, kNone, kStub);
 
-void XCustomRegisterDynamicActions_entry() {
-  // ???
+dword_result_t XamUpdateGetBaseSystemVersion_entry() {
+  return XamGetSystemVersion_entry();
 }
-DECLARE_XAM_EXPORT1(XCustomRegisterDynamicActions, kNone, kStub);
+DECLARE_XAM_EXPORT1(XamUpdateGetBaseSystemVersion, kNone, kStub);
+
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L77
+dword_result_t XamUpdateGetCurrentSystemVersion_entry() {
+  return XamGetSystemVersion_entry();
+}
+DECLARE_XAM_EXPORT1(XamUpdateGetCurrentSystemVersion, kNone, kStub);
+
+enum class AVPack {
+  Unknown0 = 3,
+  Unknown1 = 4,
+  VGA = 6,
+  Unknown2 = 8,
+};
 
 dword_result_t XGetAVPack_entry() {
   // DWORD
@@ -281,15 +304,16 @@ dword_result_t XamLoaderGetLaunchData_entry(lpvoid_t buffer_ptr,
 }
 DECLARE_XAM_EXPORT1(XamLoaderGetLaunchData, kNone, kSketchy);
 
-void XamLoaderLaunchTitle_entry(lpstring_t raw_name_ptr, dword_t flags) {
+// https://www.se7ensins.com/forums/threads/interested-in-programming-here-are-some-tips.1503852/
+void XamLoaderLaunchTitle_entry(lpstring_t launch_path, dword_t flags) {
   auto xam = kernel_state()->GetKernelModule<XamModule>("xam.xex");
 
   auto& loader_data = xam->loader_data();
   loader_data.launch_flags = flags;
 
   // Translate the launch path to a full path.
-  if (raw_name_ptr) {
-    auto path = raw_name_ptr.value();
+  if (launch_path) {
+    auto path = launch_path.value();
     if (path.empty()) {
       loader_data.launch_path = "game:\\default.xex";
     } else {
@@ -310,12 +334,25 @@ void XamLoaderLaunchTitle_entry(lpstring_t raw_name_ptr, dword_t flags) {
 }
 DECLARE_XAM_EXPORT1(XamLoaderLaunchTitle, kNone, kSketchy);
 
+// https://www.se7ensins.com/forums/threads/interested-in-programming-here-are-some-tips.1503852/
+void XamLoaderLaunchTitleEx_entry(lpstring_t launch_path, lpstring_t mount_path,
+                                  lpstring_t cmdLine, dword_t flags) {}
+DECLARE_XAM_EXPORT1(XamLoaderLaunchTitleEx, kNone, kSketchy);
+
 void XamLoaderTerminateTitle_entry() {
   // This function does not return.
   kernel_state()->TerminateTitle();
 }
 DECLARE_XAM_EXPORT1(XamLoaderTerminateTitle, kNone, kSketchy);
 
+// https://www.se7ensins.com/forums/threads/interested-in-programming-here-are-some-tips.1503852/
+dword_result_t XamLoaderGetMediaInfo_entry(dword_t media_type,
+                                           dword_t title_id /* optional */) {
+  return X_ERROR_SUCCESS;  // Returns NTSTATUS
+}
+DECLARE_XAM_EXPORT1(XamLoaderGetMediaInfo, kNone, kStub);
+
+// https://pastebin.com/11Y1rXrR
 dword_result_t XamAlloc_entry(dword_t unk, dword_t size, lpdword_t out_ptr) {
   assert_true(unk == 0);
 
@@ -328,6 +365,7 @@ dword_result_t XamAlloc_entry(dword_t unk, dword_t size, lpdword_t out_ptr) {
 }
 DECLARE_XAM_EXPORT1(XamAlloc, kMemory, kImplemented);
 
+// https://pastebin.com/11Y1rXrR
 dword_result_t XamFree_entry(lpdword_t ptr) {
   kernel_state()->memory()->SystemHeapFree(ptr.guest_address());
 

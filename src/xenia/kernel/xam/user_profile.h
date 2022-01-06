@@ -227,6 +227,9 @@ class UserProfile {
   uint64_t xuid() const { return xuid_; }
   std::string name() const { return name_; }
   uint32_t signin_state() const { return 1; }
+  uint32_t subscription_type() const {
+    return 6; /* 0 = none, 3 = silver, 6 = gold */
+  }
   uint32_t type() const { return 1 | 2; /* local | online profile? */ }
 
   void AddSetting(std::unique_ptr<Setting> setting);

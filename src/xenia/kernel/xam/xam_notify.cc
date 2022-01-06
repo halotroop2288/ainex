@@ -36,12 +36,14 @@ uint32_t xeXamNotifyCreateListener(uint64_t mask, uint32_t is_system,
   return handle;
 }
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L73
 dword_result_t XamNotifyCreateListener_entry(qword_t mask,
                                              dword_t max_version) {
   return xeXamNotifyCreateListener(mask, 0, max_version);
 }
 DECLARE_XAM_EXPORT1(XamNotifyCreateListener, kNone, kImplemented);
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L74
 dword_result_t XamNotifyCreateListenerInternal_entry(qword_t mask,
                                                      dword_t is_system,
                                                      dword_t max_version) {

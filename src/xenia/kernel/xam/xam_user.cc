@@ -24,6 +24,21 @@ namespace xe {
 namespace kernel {
 namespace xam {
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L84
+dword_result_t XamProfileCreateEnumerator_entry(dword_t device_id,
+                                                lpdword_t handle_out) {
+  return X_ERROR_SUCCESS;
+}
+DECLARE_XAM_EXPORT1(XamProfileCreateEnumerator, kUserProfiles, kStub);
+
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L85
+dword_result_t XamProfileEnumerate_entry(dword_t handle, dword_t flags,
+                                         lpvoid_t buffer,
+                                         pointer_t<XAM_OVERLAPPED> overlapped) {
+  return X_ERROR_NO_MORE_FILES;
+}
+DECLARE_XAM_EXPORT1(XamProfileEnumerate, kUserProfiles, kStub);
+
 X_HRESULT_result_t XamUserGetXUID_entry(dword_t user_index, dword_t type_mask,
                                         lpqword_t xuid_ptr) {
   assert_true(type_mask == 1 || type_mask == 2 || type_mask == 3 ||
@@ -54,6 +69,18 @@ X_HRESULT_result_t XamUserGetXUID_entry(dword_t user_index, dword_t type_mask,
   return result;
 }
 DECLARE_XAM_EXPORT1(XamUserGetXUID, kUserProfiles, kImplemented);
+
+dword_result_t XamUserGetSubscriptionType_entry(dword_t user_index) {
+  uint32_t subscription_type = 0;
+  if (user_index < 4) {
+    if (user_index == 0) {
+      const auto& user_profile = kernel_state()->user_profile();
+      subscription_type = user_profile->subscription_type();
+    }
+  }
+  return subscription_type;
+}
+DECLARE_XAM_EXPORT1(XamUserGetSubscriptionType, kUserProfiles, kImplemented);
 
 dword_result_t XamUserGetSigninState_entry(dword_t user_index) {
   // Yield, as some games spam this.
@@ -703,6 +730,7 @@ dword_result_t XamParseGamerTileKey_entry(lpdword_t key_ptr, lpdword_t out1_ptr,
 }
 DECLARE_XAM_EXPORT1(XamParseGamerTileKey, kUserProfiles, kStub);
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L86
 dword_result_t XamReadTileToTexture_entry(dword_t unknown, dword_t title_id,
                                           qword_t tile_id, dword_t user_index,
                                           lpvoid_t buffer_ptr, dword_t stride,
@@ -724,6 +752,14 @@ dword_result_t XamReadTileToTexture_entry(dword_t unknown, dword_t title_id,
   return X_ERROR_SUCCESS;
 }
 DECLARE_XAM_EXPORT1(XamReadTileToTexture, kUserProfiles, kStub);
+
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L82
+dword_result_t XamUserCreateTitlesPlayedEnumerator_entry(
+    dword_t unknown, dword_t user_index, lpqword_t xuid_ptr,
+    dword_t starting_index, dword_t item, lpdword_t handle_ptr) {
+  return X_ERROR_SUCCESS;
+}
+DECLARE_XAM_EXPORT1(XamUserCreateTitlesPlayedEnumerator, kUserProfiles, kStub);
 
 dword_result_t XamWriteGamerTile_entry(dword_t arg1, dword_t arg2, dword_t arg3,
                                        dword_t arg4, dword_t arg5,

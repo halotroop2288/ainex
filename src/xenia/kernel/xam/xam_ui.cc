@@ -264,6 +264,9 @@ class MessageBoxDialog : public XamDialog {
   uint32_t chosen_button_ = 0;
 };
 
+dword_result_t XamDoesOmniNeedConfiguration_entry() { return 0; }
+DECLARE_XAM_EXPORT1(XamDoesOmniNeedConfiguration, kMisc, kStub);
+
 // https://www.se7ensins.com/forums/threads/working-xshowmessageboxui.844116/
 dword_result_t XamShowMessageBoxUI_entry(
     dword_t user_index, lpu16string_t title_ptr, lpu16string_t text_ptr,

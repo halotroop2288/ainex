@@ -9,15 +9,11 @@
 Xenia is an experimental emulator for the Xbox 360. For more information, see the
 [main Xenia wiki](https://github.com/xenia-project/xenia/wiki).
 
+This is an even more **experimental branch**, where I (halotroop2288) merge commits that
+may not be considered "ready" by the rest of the team. This is *not* meant to be used for pull requests.
+
 **Interested in supporting the core contributors?** Visit
 [Xenia Project on Patreon](https://www.patreon.com/xenia_project).
-
-Come chat with us about **emulator-related topics** on [Discord](https://discord.gg/Q9mxZf9).
-For developer chat join `#dev` but stay on topic. Lurking is not only fine, but encouraged!
-Please check the [FAQ](https://github.com/xenia-project/xenia/wiki/FAQ) page before asking questions.
-We've got jobs/lives/etc, so don't expect instant answers.
-
-Discussing illegal activities will get you banned.
 
 ## Status
 

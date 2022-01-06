@@ -180,10 +180,14 @@ void XmaContext::SwapInputBuffer(XMA_CONTEXT_DATA* data) {
 bool XmaContext::TrySetupNextLoop(XMA_CONTEXT_DATA* data,
                                   bool ignore_input_buffer_offset) {
   // Setup the input buffer offset if next loop exists.
-  // TODO(Pseudo-Kernel): Need to handle loop in the following cases.
-  // 1. loop_start == loop_end == 0
-  // 2. loop_start > loop_end && loop_count > 0
-  if (data->loop_count > 0 && data->loop_start < data->loop_end &&
+  // TODO(Pseudo-Kernel): Need to handle loop in the following case:
+  // loop_start > loop_end && loop_count > 0
+
+  // invalid loop
+  if (data->loop_start >= data->loop_end || data->loop_end == 0) {
+    return false;
+  }
+  if (data->loop_count > 0 &&
       (ignore_input_buffer_offset ||
        data->input_buffer_read_offset >= data->loop_end)) {
     // Loop back to the beginning.
@@ -320,7 +324,9 @@ void XmaContext::Decode(XMA_CONTEXT_DATA* data) {
 
   // No available data.
   if (!data->input_buffer_0_valid && !data->input_buffer_1_valid) {
-    data->output_buffer_valid = 0;
+    // 4156081D checks specifically for offset 0x20 when both input buffers
+    // are invalid.
+    data->input_buffer_read_offset = kBitsPerHeader;
     return;
   }
 

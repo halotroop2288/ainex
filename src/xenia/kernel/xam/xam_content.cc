@@ -204,6 +204,9 @@ dword_result_t xeXamContentCreate(dword_t user_index, lpstring_t root_name,
 
     if (create) {
       result = content_manager->CreateContent(root_name, content_data);
+      if (XSUCCEEDED(result)) {
+        content_manager->WriteContentHeaderFile(&content_data);
+      }
     } else if (open) {
       result = content_manager->OpenContent(root_name, content_data);
     }
@@ -259,6 +262,7 @@ dword_result_t XamContentCreateInternal_entry(
 }
 DECLARE_XAM_EXPORT1(XamContentCreateInternal, kContent, kImplemented);
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L69
 dword_result_t XamContentOpenFile_entry(dword_t user_index,
                                         lpstring_t root_name, lpstring_t path,
                                         dword_t flags,
@@ -270,6 +274,7 @@ dword_result_t XamContentOpenFile_entry(dword_t user_index,
 }
 DECLARE_XAM_EXPORT1(XamContentOpenFile, kContent, kStub);
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L71
 dword_result_t XamContentFlush_entry(lpstring_t root_name,
                                      lpunknown_t overlapped_ptr) {
   X_RESULT result = X_ERROR_SUCCESS;
@@ -282,6 +287,7 @@ dword_result_t XamContentFlush_entry(lpstring_t root_name,
 }
 DECLARE_XAM_EXPORT1(XamContentFlush, kContent, kStub);
 
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L70
 dword_result_t XamContentClose_entry(lpstring_t root_name,
                                      lpunknown_t overlapped_ptr) {
   // Closes a previously opened root from XamContentCreate*.

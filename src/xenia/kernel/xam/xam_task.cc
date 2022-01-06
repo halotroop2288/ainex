@@ -50,9 +50,9 @@ dword_result_t XamTaskSchedule_entry(lpvoid_t callback,
   // Stack must be aligned to 16kb pages
   stack_size = std::max((uint32_t)0x4000, ((stack_size + 0xFFF) & 0xFFFFF000));
 
-  auto thread =
-      object_ref<XThread>(new XThread(kernel_state(), stack_size, 0, callback,
-                                      message.guest_address(), 0, true));
+  auto thread = object_ref<XThread>(new XThread(
+      kernel_state(), stack_size, xe::kernel::XThread::StartupType::Normal,
+      callback, message.guest_address(), 0, true, false));
 
   X_STATUS result = thread->Create();
 
