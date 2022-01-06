@@ -37,9 +37,8 @@ DEFINE_int32(user_country, 103,
              " 102=UA 103=US 104=UY 105=UZ 106=VE 107=VN 108=YE 109=ZA\n",
              "XConfig");
 
-
 DEFINE_bool(initial_setup_complete, true,
-            "Boot dashboard to Out of Box Experience", "XConfig")
+            "Boot dashboard to Out of Box Experience", "XConfig");
 
 namespace xe {
 namespace kernel {
