@@ -7,6 +7,7 @@
  ******************************************************************************
  */
 
+#include "xenia/kernel/xboxkrnl/xboxkrnl_xconfig.h"
 #include "xenia/base/logging.h"
 #include "xenia/cpu/processor.h"
 #include "xenia/kernel/kernel_state.h"
@@ -51,8 +52,9 @@ X_STATUS xeExGetXConfigSetting(uint16_t category, uint16_t setting,
   // https://free60project.github.io/wiki/XConfig.html
   // https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/ExConfig.h
   switch (category) {
-    case 0x0002:
-      // XCONFIG_SECURED_CATEGORY
+    case XCONFIG_STATIC_CATEGORY:
+      break;
+    case XCONFIG_SECURED_CATEGORY:
       switch (setting) {
         case 0x0002:  // XCONFIG_SECURED_AV_REGION
           setting_size = 4;
@@ -66,31 +68,31 @@ X_STATUS xeExGetXConfigSetting(uint16_t category, uint16_t setting,
     case 0x0003:
       // XCONFIG_USER_CATEGORY
       switch (setting) {
-        case 0x0001:  // XCONFIG_USER_TIME_ZONE_BIAS
-        case 0x0002:  // XCONFIG_USER_TIME_ZONE_STD_NAME
-        case 0x0003:  // XCONFIG_USER_TIME_ZONE_DLT_NAME
-        case 0x0004:  // XCONFIG_USER_TIME_ZONE_STD_DATE
-        case 0x0005:  // XCONFIG_USER_TIME_ZONE_DLT_DATE
-        case 0x0006:  // XCONFIG_USER_TIME_ZONE_STD_BIAS
-        case 0x0007:  // XCONFIG_USER_TIME_ZONE_DLT_BIAS
+        case XCONFIG_USER_TIME_ZONE_BIAS:
+        case XCONFIG_USER_TIME_ZONE_STD_NAME:
+        case XCONFIG_USER_TIME_ZONE_DLT_NAME:
+        case XCONFIG_USER_TIME_ZONE_STD_DATE:
+        case XCONFIG_USER_TIME_ZONE_DLT_DATE:
+        case XCONFIG_USER_TIME_ZONE_STD_BIAS:
+        case XCONFIG_USER_TIME_ZONE_DLT_BIAS:
           setting_size = 4;
           // TODO(benvanik): get this value.
           xe::store_and_swap<uint32_t>(value, 0);
           break;
-        case 0x0009:  // XCONFIG_USER_LANGUAGE
+        case XCONFIG_USER_LANGUAGE:
           setting_size = 4;
           xe::store_and_swap<uint32_t>(value, cvars::user_language);
           break;
-        case 0x000A:  // XCONFIG_USER_VIDEO_FLAGS
+        case XCONFIG_USER_VIDEO_FLAGS:
           setting_size = 4;
           xe::store_and_swap<uint32_t>(value, 0x00040000);
           break;
-        case 0x000C:  // XCONFIG_USER_RETAIL_FLAGS
+        case XCONFIG_USER_RETAIL_FLAGS:
           setting_size = 4;
           // TODO(benvanik): get this value.
           xe::store_and_swap<uint32_t>(value, 0);
           break;
-        case 0x000E:  // XCONFIG_USER_COUNTRY
+        case XCONFIG_USER_COUNTRY:  
           setting_size = 1;
           value[0] = static_cast<uint8_t>(cvars::user_country);
           break;
