@@ -267,18 +267,18 @@ X_STATUS Emulator::TerminateTitle() {
 
 X_STATUS Emulator::LaunchPath(const std::filesystem::path& path) {
   // Launch based on file type.
-  // This is a silly guess based on file extension.
-  if (!path.has_extension()) {
-    // Likely an STFS container.
-    return LaunchStfsContainer(path);
-  };
   auto extension = xe::utf8::lower_ascii(xe::path_to_utf8(path.extension()));
+
+  // This is a silly guess based on file extension.
   if (extension == ".xex" || extension == ".elf" || extension == ".exe") {
     // Treat as a naked xex file.
     return LaunchXexFile(path);
-  } else {
+  } else if (extension == ".iso" || extension == ".xiso") {
     // Assume a disc image.
     return LaunchDiscImage(path);
+  } else {
+    // Likely an STFS container.
+    return LaunchStfsContainer(path);
   }
 }
 
@@ -361,6 +361,48 @@ X_STATUS Emulator::LaunchStfsContainer(const std::filesystem::path& path) {
   // Launch the game.
   auto module_path(FindLaunchModule());
   return CompleteLaunch(path, module_path);
+}
+
+X_STATUS Emulator::MountDvdPath(const std::filesystem::path& path) {
+  auto mount_path = "\\Device\\Cdrom0";
+
+  // Register the disc image in the virtual filesystem.
+  auto device = std::make_unique<vfs::HostPathDevice>(mount_path, path, true);
+  if (!device->Initialize()) {
+    xe::FatalError("Unable to mount disc image; file not found or corrupt.");
+    return X_STATUS_NO_SUCH_FILE;
+  }
+  if (!file_system_->RegisterDevice(std::move(device))) {
+    xe::FatalError("Unable to register disc image.");
+    return X_STATUS_NO_SUCH_FILE;
+  }
+
+  // Create symlinks to the device.
+  file_system_->RegisterSymbolicLink("dvd:", mount_path);
+  file_system_->RegisterSymbolicLink("d:", mount_path);
+
+  return X_STATUS_SUCCESS;
+}
+
+X_STATUS Emulator::MountHddPath(const std::filesystem::path& path) {
+  auto mount_path = "\\Device\\Harddisk0\\Partition1";
+
+  // Register the disc image in the virtual filesystem.
+  auto device = std::make_unique<vfs::HostPathDevice>(mount_path, path, true);
+  if (!device->Initialize()) {
+    xe::FatalError("Unable to mount disc image; file not found or corrupt.");
+    return X_STATUS_NO_SUCH_FILE;
+  }
+  if (!file_system_->RegisterDevice(std::move(device))) {
+    xe::FatalError("Unable to register disc image.");
+    return X_STATUS_NO_SUCH_FILE;
+  }
+
+  // Create symlinks to the device.
+  file_system_->RegisterSymbolicLink("game:", mount_path);
+  file_system_->RegisterSymbolicLink("d:", mount_path);
+
+  return X_STATUS_SUCCESS;
 }
 
 void Emulator::Pause() {

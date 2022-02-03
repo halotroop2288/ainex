@@ -129,6 +129,11 @@ class EmulatorWindow {
   void OnKeyDown(ui::KeyEvent& e);
   void FileDrop(const std::filesystem::path& filename);
   void FileOpen();
+  enum class MountType {
+    Disc,
+    HardDrive,
+  };
+  void MountPath(MountType type);
   void FileClose();
   void ShowContentDirectory();
   void CpuTimeScalarReset();

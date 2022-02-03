@@ -186,6 +186,12 @@ class Emulator {
   // Launches a game from an STFS container file.
   X_STATUS LaunchStfsContainer(const std::filesystem::path& path);
 
+  // Mounts a path to dvd:
+  X_STATUS MountDvdPath(const std::filesystem::path& path);
+
+  // Mounts a path to hard drive partitions 0 and 1
+  X_STATUS MountHddPath(const std::filesystem::path& path);
+
   void Pause();
   void Resume();
   bool is_paused() const { return paused_; }

@@ -506,6 +506,16 @@ bool EmulatorWindow::Initialize() {
     file_menu->AddChild(
         MenuItem::Create(MenuItem::Type::kString, "&Open...", "Ctrl+O",
                          std::bind(&EmulatorWindow::FileOpen, this)));
+    auto mount_menu = MenuItem::Create(MenuItem::Type::kPopup, "&Mount Path");
+    {
+      mount_menu->AddChild(MenuItem::Create(
+          MenuItem::Type::kString, "DVD",
+          [this] { EmulatorWindow::MountPath(MountType::Disc); }));
+      mount_menu->AddChild(MenuItem::Create(
+          MenuItem::Type::kString, "Hard Drive",
+          [this] { EmulatorWindow::MountPath(MountType::HardDrive); }));
+    }
+    file_menu->AddChild(std::move(mount_menu));
 #ifdef DEBUG
     file_menu->AddChild(
         MenuItem::Create(MenuItem::Type::kString, "Close",
@@ -839,6 +849,33 @@ void EmulatorWindow::FileOpen() {
     if (XFAILED(result)) {
       // TODO: Display a message box.
       XELOGE("Failed to launch target: {:08X}", result);
+    }
+  }
+}
+
+void EmulatorWindow::MountPath(MountType type) {
+  std::filesystem::path path;
+
+  auto file_picker = xe::ui::FilePicker::Create();
+  file_picker->set_mode(ui::FilePicker::Mode::kOpen);
+  file_picker->set_type(ui::FilePicker::Type::kDirectory);
+  file_picker->set_multi_selection(false);
+  file_picker->set_title("Select Path to Mount");
+  if (file_picker->Show(window_.get())) {
+    auto selected_files = file_picker->selected_files();
+    if (!selected_files.empty()) {
+      path = selected_files[0];
+    }
+  }
+
+  if (!path.empty()) {
+    // Normalize the path and make absolute.
+    auto abs_path = std::filesystem::absolute(path);
+    auto result = type == MountType::Disc ? emulator_->MountDvdPath(abs_path)
+                                          : emulator_->MountHddPath(abs_path);
+    if (XFAILED(result)) {
+      // TODO: Display a message box.
+      XELOGE("Failed to mount target: {:08X}", result);
     }
   }
 }
