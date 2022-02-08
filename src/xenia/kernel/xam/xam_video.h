@@ -7,24 +7,29 @@
  ******************************************************************************
  */
 
-#ifndef XENIA_KERNEL_XBOXKRNL_XBOXKRNL_VIDEO_H_
-#define XENIA_KERNEL_XBOXKRNL_XBOXKRNL_VIDEO_H_
+#ifndef XENIA_KERNEL_XAM_XAM_VIDEO_
+#define XENIA_KERNEL_XAM_XAM_VIDEO_
 
-#include "xenia/kernel/util/shim_utils.h"
-#include "xenia/xbox.h"
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "xenia/base/mutex.h"
+#include "xenia/kernel/kernel_state.h"
+#include "xenia/kernel/xam/app_manager.h"
 
 namespace xe {
 namespace kernel {
-namespace xboxkrnl {
+namespace xam {
 
-#define X_VIDEO_STANDARD_NTSC 0x1
-#define X_VIDEO_STANDARD_NTSCJ 0x2
-#define X_VIDEO_STANDARD_PAL 0x3
+#define X_VIDEO_FLAGS_WIDESCREEN 0x1
+#define X_VIDEO_FLAGS_720p 0x2
+#define X_VIDEO_FLAGS_1080i 0x4
+#define X_VIDEO_FLAGS_480p 0x8
 
-void VdQueryVideoMode(X_VIDEO_MODE* video_mode);
-
-}  // namespace xboxkrnl
+}  // namespace xam
 }  // namespace kernel
 }  // namespace xe
 
-#endif  // XENIA_KERNEL_XBOXKRNL_XBOXKRNL_VIDEO_H_
+#endif  // XENIA_KERNEL_XAM_XAM_VIDEO_H_
