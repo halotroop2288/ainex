@@ -566,6 +566,20 @@ dword_result_t XamContentDeleteInternal_entry(lpvoid_t content_data_ptr,
 }
 DECLARE_XAM_EXPORT1(XamContentDeleteInternal, kContent, kImplemented);
 
+dword_result_t XamPackageManagerFindPackageContainingIndexedXEX_entry(
+  dword_t param1, dword_t param2, dword_t param3, dword_t param4,
+  dword_t param5, dword_t param6) {
+  XELOGI(
+      "XamPackageManagerFindPackageContainingIndexedXEX({}, {}, {}, {}, {}, "
+      "{})",
+      param1.value(), param2.value(), param3.value(), param4.value(),
+      param5.value(), param6.value());
+
+  return X_ERROR_SUCCESS;
+}
+DECLARE_XAM_EXPORT2(XamPackageManagerFindPackageContainingIndexedXEX, kContent,
+                  kStub, kHighFrequency);
+
 typedef struct {
   xe::be<uint32_t> stringTitlePtr;
   xe::be<uint32_t> stringTextPtr;
@@ -726,6 +740,20 @@ dword_result_t XamContentLaunchImageInternal_entry(lpvoid_t content_data_ptr,
   kernel_state()->TerminateTitle();
   return X_ERROR_SUCCESS;
 }
+
+dword_result_t XdfLoadXexFromCache_entry(dword_t param1, dword_t param2,
+                                         dword_t param3, lpdword_t param4) {
+  XELOGI("XdfLoadXexFromCache({}, {}, {}, {})", param1.value(), param2.value(),
+  param3.value(), param4.value());
+  if (!param1 || !param4 || !param2) {
+    return X_E_INVALIDARG;
+  }
+
+  *param4 = 0;
+
+  return X_ERROR_SUCCESS;
+}
+DECLARE_XAM_EXPORT2(XdfLoadXexFromCache, kContent, kStub, kHighFrequency);
 
 DECLARE_XAM_EXPORT1(XamContentLaunchImageInternal, kContent, kStub);
 }  // namespace xam

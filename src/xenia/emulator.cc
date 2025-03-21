@@ -448,6 +448,13 @@ X_STATUS Emulator::MountPath(const std::filesystem::path& path,
   // Create symlinks to the device.
   file_system_->RegisterSymbolicLink(kDefaultGameSymbolicLink, mount_path);
   file_system_->RegisterSymbolicLink(kDefaultPartitionSymbolicLink, mount_path);
+  
+  file_system_->RegisterSymbolicLink("d:", mount_path);
+  file_system_->RegisterSymbolicLink("media:", mount_path);
+  file_system_->RegisterSymbolicLink("font:", mount_path);
+  file_system_->RegisterSymbolicLink("DASHUSER:", mount_path);
+  file_system_->RegisterSymbolicLink("update:", mount_path);
+  file_system_->RegisterSymbolicLink("flash:", mount_path);
 
   return X_STATUS_SUCCESS;
 }
@@ -533,7 +540,13 @@ X_STATUS Emulator::LaunchPath(const std::filesystem::path& path) {
     case FileSignatureType::XEX1:
     case FileSignatureType::XEX2:
     case FileSignatureType::ELF: {
+      mount_result = MountPath(path, "\\Device\\Harddisk0\\Partition0");
+      if (mount_result) return mount_result;
       mount_result = MountPath(path, "\\Device\\Harddisk0\\Partition1");
+      if (mount_result) return mount_result;
+      mount_result = MountPath(path, "\\Device\\Harddisk0\\Partition1\\DEVKIT");
+      if (mount_result) return mount_result;
+      mount_result = MountPath(path, "\\SystemRoot");
       return mount_result ? mount_result : LaunchXexFile(path);
     } break;
     case FileSignatureType::LIVE:

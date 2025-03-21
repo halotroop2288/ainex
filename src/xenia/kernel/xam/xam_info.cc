@@ -57,6 +57,16 @@ namespace xam {
 // https://github.com/tpn/winsdk-10/blob/master/Include/10.0.14393.0/km/wdm.h#L15539
 typedef enum _MODE { KernelMode, UserMode, MaximumMode } MODE;
 
+uint32_t dvd_tray_state_ = kXNotificationDvdDriveTrayStateClosed;
+
+static XNotificationID GetTrayState() { return dvd_tray_state_; }
+
+void SetTrayState(uint32_t state) {
+  dvd_tray_state_ = state;
+  kernel_state()->BroadcastNotification(kXNotificationDvdDriveTrayStateChanged,
+                                        state);
+}
+
 dword_result_t XamFeatureEnabled_entry(dword_t unk) { return 0; }
 DECLARE_XAM_EXPORT1(XamFeatureEnabled, kNone, kStub);
 
@@ -203,6 +213,17 @@ dword_result_t XamGetSystemVersion_entry() {
 }
 DECLARE_XAM_EXPORT1(XamGetSystemVersion, kNone, kStub);
 
+dword_result_t XamUpdateGetBaseSystemVersion_entry() {
+  return XamGetSystemVersion_entry();
+}
+DECLARE_XAM_EXPORT1(XamUpdateGetBaseSystemVersion, kNone, kStub);
+
+// https://github.com/oukiar/freestyledash/blob/master/Freestyle/Tools/Generic/XamExports.h#L77
+dword_result_t XamUpdateGetCurrentSystemVersion_entry() {
+  return XamGetSystemVersion_entry();
+}
+DECLARE_XAM_EXPORT1(XamUpdateGetCurrentSystemVersion, kNone, kStub);
+
 void XCustomRegisterDynamicActions_entry() {
   // ???
 }
@@ -344,6 +365,21 @@ dword_result_t XamLoaderGetLaunchData_entry(lpvoid_t buffer_ptr,
 }
 DECLARE_XAM_EXPORT1(XamLoaderGetLaunchData, kNone, kSketchy);
 
+dword_result_t XamLoaderGetPriorTitleId_entry(lpvoid_t unk, dword_t unk1) {
+  return 0; // TODO: Get from recent titles list
+}
+DECLARE_XAM_EXPORT1(XamLoaderGetPriorTitleId, kNone, kSketchy);
+
+dword_result_t XamLoaderGetDvdTrayState_entry(lpvoid_t unk, dword_t unk1) {
+  return GetTrayState();
+}
+DECLARE_XAM_EXPORT1(XamLoaderGetDvdTrayState, kNone, kSketchy);
+
+void XamLoaderGetMediaInfo_entry(lpdword_t unk1, dword_t unk2) {
+  xe::store_and_swap<uint32_t>(unk1, 0);
+}
+DECLARE_XAM_EXPORT1(XamLoaderGetMediaInfo, kNone, kStub);
+
 void XamLoaderLaunchTitle_entry(lpstring_t raw_name_ptr, dword_t flags) {
   auto xam = kernel_state()->GetKernelModule<XamModule>("xam.xex");
 
@@ -384,6 +420,11 @@ void XamLoaderLaunchTitle_entry(lpstring_t raw_name_ptr, dword_t flags) {
   kernel_state()->TerminateTitle();
 }
 DECLARE_XAM_EXPORT1(XamLoaderLaunchTitle, kNone, kSketchy);
+
+// https://www.se7ensins.com/forums/threads/interested-in-programming-here-are-some-tips.1503852
+void XamLoaderLaunchTitleEx_entry(lpstring_t launch_path, lpstring_t mount_path,
+                                  lpstring_t cmdLine, dword_t flags) {}
+DECLARE_XAM_EXPORT1(XamLoaderLaunchTitleEx, kNone, kSketchy);
 
 void XamLoaderTerminateTitle_entry() {
   // This function does not return.

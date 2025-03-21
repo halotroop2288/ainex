@@ -20,6 +20,7 @@
 #include "xenia/kernel/xam/user_tracker.h"
 #include "xenia/kernel/xam/xam_content_device.h"
 #include "xenia/kernel/xam/xam_private.h"
+#include "xenia/kernel/xboxkrnl/xboxkrnl_xconfig.h"
 #include "xenia/ui/imgui_dialog.h"
 #include "xenia/ui/imgui_drawer.h"
 #include "xenia/ui/imgui_guest_notification.h"
@@ -926,6 +927,21 @@ class GamesInfoDialog final : public XamDialog {
   std::vector<TitleInfo> info_;
 };
 
+dword_result_t XamDoesOmniNeedConfiguration_entry() { return 0; }
+DECLARE_XAM_EXPORT1(XamDoesOmniNeedConfiguration, kMisc, kStub);
+
+dword_result_t XamFirstRunExperienceShouldRun_entry() {
+  uint32_t buffer = 0x00000000;
+  const auto result = xboxkrnl::xeExGetXConfigSetting(0x0003, 0x000C, &buffer, sizeof(buffer), nullptr);
+
+  if (result == X_STATUS_SUCCESS) {
+    return !(buffer & 0x00000040);
+  }
+
+  return false;
+}
+DECLARE_XAM_EXPORT1(XamFirstRunExperienceShouldRun, kMisc, kStub);
+
 static dword_result_t XamShowMessageBoxUi(
     dword_t user_index, lpu16string_t title_ptr, lpu16string_t text_ptr,
     dword_t button_count, lpdword_t button_ptrs, dword_t active_button,
@@ -1019,6 +1035,18 @@ dword_result_t XamShowMessageBoxUIEx_entry(
                              overlapped);
 }
 DECLARE_XAM_EXPORT1(XamShowMessageBoxUIEx, kUI, kImplemented);
+
+dword_result_t XNotifyBroadcast_entry(dword_t notification, dword_t data,
+  dword_t unk) {
+  XNotificationID id = notification;
+  if (!id) {
+    XELOGI("XNotifyBroadcast: New ID {:08x}", notification.value());
+  }
+  kernel_state()->BroadcastNotification(notification, data);
+
+  return X_ERROR_SUCCESS;
+}
+DECLARE_XAM_EXPORT1(XNotifyBroadcast, kUI, kStub);
 
 dword_result_t XNotifyQueueUI_entry(dword_t exnq, dword_t dwUserIndex,
                                     qword_t qwAreas,

@@ -894,6 +894,12 @@ void KernelState::RegisterNotifyListener(XNotifyListener* listener) {
     // XN_SYS_SIGNINCHANGED x2
     listener->EnqueueNotification(kXNotificationSystemSignInChanged, 1);
     listener->EnqueueNotification(kXNotificationSystemSignInChanged, 1);
+
+    listener->EnqueueNotification(kXNotificationDvdDriveTrayStateChanged,
+      kXNotificationDvdDriveTrayStateClosed);
+    listener->EnqueueNotification(kXNotificationSystemStorageDevicesChanged, 0);
+    listener->EnqueueNotification(kXNotificationSystemStorageDevicesChanged, 1);
+    listener->EnqueueNotification(kXNotificationLivePresenceChanged, 1);
   }
 }
 

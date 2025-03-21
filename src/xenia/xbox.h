@@ -131,6 +131,13 @@ typedef uint32_t X_HRESULT;
 #define X_E_NOTFOUND                            X_HRESULT_FROM_WIN32(X_ERROR_NOT_FOUND)
 #define X_E_NO_SUCH_USER                        X_HRESULT_FROM_WIN32(X_ERROR_NO_SUCH_USER)
 
+#define X_USER_LOGON_SIGNOUT        0x23  //
+#define X_USER_LOGON_SIGNOUT_2      0x48  // Blades
+#define X_USER_LOGON_SIGNOUT_3      0x13  // Testing Network
+#define X_USER_LOGON_SIGNIN         0x424 //
+#define X_USER_LOGON_SIGNIN_2       0x25  // NXE
+#define X_USER_LOGON_SIGNIN_3       0x14  // Blades OOBE profile creation
+
 //IOCTL_, used by NtDeviceIoControlFile
 constexpr uint32_t X_IOCTL_DISK_GET_DRIVE_GEOMETRY = 0x70000;
 constexpr uint32_t X_IOCTL_DISK_GET_PARTITION_INFO = 0x74004;
@@ -331,9 +338,14 @@ enum : XNotificationID {
   kXNotificationCustomGamercard = 0x06010004,
 
   // XNotification Dvd ?
-  kXNotificationDvdDriveUnknown = 0x80000003,
+  kXNotificationDvdDriveTrayStateClosed    = 0x00000000,
+  kXNotificationDvdDriveTrayStateClosing   = 0x00000001,
+  kXNotificationDvdDriveTrayStateOpen      = 0x00000002,
+  kXNotificationDvdDriveTrayStateOpening   = 0x00000003,
+  kXNotificationDvdDriveTrayStateReading   = 0x00000004,
+  kXNotificationDvdDriveUnknown            = 0x80000003,
   kXNotificationDvdDriveUnknownDashContext = 0x8000000C,
-  kXNotificationDvdDriveTrayStateChanged = 0x8000000D,
+  kXNotificationDvdDriveTrayStateChanged   = 0x8000000D,
 
   // XNotification XMP
   kXNotificationXmpStateChanged = 0x0A000001,

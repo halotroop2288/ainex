@@ -347,9 +347,9 @@ def generate_source_file(path):
     """
     copyright = '''/**
  ******************************************************************************
- * Xenia : Xbox 360 Emulator Research Project                                 *
+ * Ainex : Xbox 360 Emulator Project                                          *
  ******************************************************************************
- * Copyright {} Ben Vanik. All rights reserved.                             *
+ * Copyright {} Ainex Contributors.                                         *
  * Released under the BSD license - see LICENSE in the root for more details. *
  ******************************************************************************
  */'''.format(datetime.now().year)
@@ -811,6 +811,8 @@ class BaseBuildCommand(Command):
             help='Skips running premake before building.')
         self.parser.add_argument(
             '-j', default=os.cpu_count(), type=int, help='Number of parallel threads')
+        self.parser.add_argument(
+            '--platform', default=sys.platform, help='Platform to build for / build system to use')
 
     def execute(self, args, pass_args, cwd):
         if not args['no_premake']:
@@ -825,7 +827,7 @@ class BaseBuildCommand(Command):
         print('- building (%s):%s...' % (
             'all' if not len(args['target']) else ', '.join(args['target']),
             args['config']))
-        if sys.platform == 'win32':
+        if args['platform'] == 'win32' or args['platform'] == 'vs':
             if vs_version is None:
                 print('ERROR: Visual Studio is not installed.');
                 result = 1
@@ -847,7 +849,7 @@ class BaseBuildCommand(Command):
                     '/p:Configuration=' + args['config'],
                     ] + ([targets] if targets is not None else []) + pass_args,
                     shell=False)
-        elif sys.platform == 'darwin':
+        elif args['platform'] == 'darwin' or args['platform'] == 'xcode':
             schemes = args['target'] if len(args['target']) else ['xenia-app']
             nested_args = [['-scheme', scheme] for scheme in schemes]
             scheme_args = [arg for pair in nested_args for arg in pair]

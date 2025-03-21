@@ -17,6 +17,10 @@ namespace xe {
 namespace kernel {
 namespace xboxkrnl {
 
+X_STATUS xeExGetXConfigSetting(uint16_t category, uint16_t setting,
+  void* buffer, uint16_t buffer_size,
+  uint16_t* required_size = nullptr);
+
 // XCONFIG_SECURED_AV_REGION
 enum X_AV_REGION : uint32_t {
   NTSCM = 0x00400100,
@@ -49,24 +53,22 @@ enum X_AUDIO_FLAGS : uint32_t {
 enum X_RETAIL_FLAGS : uint32_t {
   // Clock
   DSTOff = 0x00000002,
+  NetworkInitialized = 0x00000004,
   TwentyFourHourClock = 0x00000008,
 
   // Startup
-  DashboardStartup = 0x00000080,
-  IPTVStartup = 0x00000800,
-  DiscStartup = 0x00002000,
+  DashboardInitialized = 0x00000040,
+  BootToDashboard = 0x00000080,
+  BootToIPTV = 0x00000800,
+  BootToDisc = 0x00002000,
+  BackgroundDownloads  = 0X00010000,
   MCXDownloaderStartup = 0x00020000,
   // IPTV
   IPTVEnabled = 0x00001000,
-  IPTVDVRENABLED = 0x00080000,
-  IPTVDisabled = 0x02000000,
+  IPTVDVREnabled = 0x00080000,
   // Kinect
   KinectInitialized = 0x20000000,
   KinectDisabled = 0x80000000,
-
-  // Other
-  DashboardInitialized = 0x00000040,
-  BackgroundDownloadOn = 0X00010000,
 };
 
 // XCONFIG_USER_PC_FLAGS
